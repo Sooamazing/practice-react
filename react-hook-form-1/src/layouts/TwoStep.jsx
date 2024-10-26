@@ -1,6 +1,9 @@
 import React from 'react';
 import { useFormContext,useForm, useController } from "react-hook-form";
 
+/**
+    TODO phone 숫자만 입력 허용, - 자동 입력
+ */
 function TwoStep() {
     const { handleSubmit, control, formState: { errors } } = useFormContext();
     const { field: name } = useController({ name: 'basic.name', control, rules: { required: 'Name is required' } });

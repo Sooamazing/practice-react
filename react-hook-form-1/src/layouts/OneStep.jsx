@@ -4,6 +4,11 @@ import ControlledInput from "../features/ControlledInput";
 import InputWithFormFeedback from "../features/InputWithFormFeedback";
 import InputControllerInside from "../features/InputControllerInside";
 
+/**
+ *  각 상태에 따른 렌더링 확인
+    TODO 다른 필드 값에 따른 Validation 확인 및 필수 여부 변경
+    TODO validation에서 에러 메시지 localeId, defaultMessage 설정
+ */
 function OneStep() {
     const { handleSubmit, control, getValues, formState: { errors } } = useFormContext();
     const { field: startYear } = useController({
