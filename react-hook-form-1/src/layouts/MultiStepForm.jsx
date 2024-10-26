@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm, FormProvider } from "react-hook-form";
-import OneStep from './OneStep';
-import TwoStep from './TwoStep';
+import { StepProvider, useStep } from '../contexts/StepContext';
+import StepIndicator from './StepIndicator';
+import OneStep from "./OneStep";
+import TwoStep from "./TwoStep";
+import FourStep from "./FourStep";
+import ThreeStep from "./ThreeStep";
 
 function MultiStepForm() {
-    const methods = useForm();
-    const [step, setStep] = useState(1);
+    const methods = useForm({ shouldUnregister: false });
+    const { step, nextStep, prevStep } = useStep();
+
+    const steps = [
+        { component: <OneStep key="one" />,  },
+        { component: <TwoStep key="two" />},
+        { component: <ThreeStep key="three" />},
+        { component: <FourStep key="four" /> }
+    ];
 
     const onSubmit = (data) => {
         console.log('Final data:', data);
@@ -14,26 +25,29 @@ function MultiStepForm() {
     const handleNextStep = async () => {
         const isStepValid = await methods.trigger();
         if (isStepValid) {
-            setStep(step + 1);
+            nextStep();
         }
     };
-    const steps = [<OneStep key="one" />, <TwoStep key="two" />];
 
     return (
         <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-                {/* 첫 번째 - 가장 단순한 방식*/}
-                {/*{step === 1 && <OneStep />}*/}
-                {/*{step === 2 && <TwoStep />}*/}
-                {/*두 번째 - JSX 컴포넌트 배열의 key값을 이용하는 방식 */}
-                {/*{steps[step]}*/}
+                <StepIndicator />
+                {steps[step].component}
                 <div>
-                    {step < 2 && <button type="button" onClick={handleNextStep}>Next</button>}
-                    {step === 2 && <button type="submit">Submit</button>}
+                    {step > 0 && <button type="button" onClick={prevStep}>Previous</button>}
+                    {step < steps.length - 1 && <button type="button" onClick={handleNextStep}>Next</button>}
+                    {step === steps.length - 1 && <button type="submit">Submit</button>}
                 </div>
             </form>
         </FormProvider>
     );
 }
 
-export default MultiStepForm;
+export default function App() {
+    return (
+        <StepProvider>
+            <MultiStepForm />
+        </StepProvider>
+    );
+}
