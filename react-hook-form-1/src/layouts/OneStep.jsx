@@ -1,6 +1,8 @@
 import React from 'react';
 import { useFormContext, useController } from "react-hook-form";
 import ControlledInput from "../features/ControlledInput";
+import InputWithFormFeedback from "../features/InputWithFormFeedback";
+import InputControllerInside from "../features/InputControllerInside";
 
 function OneStep() {
     const { handleSubmit, control, getValues, formState: { errors } } = useFormContext();
@@ -40,6 +42,7 @@ function OneStep() {
             }
         }
     });
+
     const { field: endYear } = useController({
         name: 'education.end.year',
         control,
@@ -58,49 +61,35 @@ function OneStep() {
             }
         }
     });
-    const { field: endMonth } = useController({
-        name: 'education.end.month',
-        control,
-        rules: {
-            validate: (value) => {
-                const startYear = getValues('education.start.year');
-                const startMonth = getValues('education.start.month');
-                const endYear = getValues('education.end.year');
-                if (value || startYear || startMonth || endYear) {
-                    if (!value) return 'End month is required';
-                    const startDate = new Date(startYear, startMonth - 1);
-                    const endDate = new Date(endYear, value - 1);
-                    return endDate > startDate || 'End date must be after start date';
-                }
-                return true;
-            }
-        }
-    });
 
-    const onSubmit = (data) => {
+
+    const onSubmit = (data) =>
+    {
         console.log('OneStep data:', data);
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <div>
-                시작 년도: <ControlledInput type="text" field={startYear} placeholder="Start Year"/>
-                {errors.education?.start?.year && <span>{errors.education.start.year.message}</span>}
+        <form onSubmit={handleSubmit(onSubmit)} style={{display: "flex", flexDirection: "column", gap: "10px"}}>
+            <div>함수도 없는 그냥 layout에서 input 정의 <br/>
+                <input type="text" placeholder="연결X"/>
             </div>
+
             <div>
-                시작 월:
+                layout에서 controller, input, errorMessage 정의 -----
+                <br/>
                 <input type="text" {...startMonth} placeholder="Start Month"/><br/>
                 {errors.education?.start?.month && <span>{errors.education.start.month.message}</span>}
             </div>
             <div>
-                마감 년도: <input type="text" {...endYear} placeholder="End Year"/>
-                {errors.education?.end?.year && <span>{errors.education.end.year.message}</span>}
+                <ControlledInput type="text" field={startYear} placeholder="Start Year"/>
+                {errors.education?.start?.year && <span>{errors.education.start.year.message}</span>}
             </div>
             <div>
-                마감 월: <ControlledInput type="text" field={endMonth}  placeholder="End Month"/> <br /><br />
-                {errors.education?.end?.month && <span>{errors.education.end.month.message}</span>}
+                <InputWithFormFeedback type="text" field={endYear} errors={errors} placeholder="End Year"/>
             </div>
-            <button type="button">Submit</button>
+            <div>
+                <InputControllerInside type="text" placeholder="End Month"/>
+            </div>
         </form>
     );
 }
