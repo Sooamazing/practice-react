@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFormContext, useController } from "react-hook-form";
+import ControlledInput from "../features/ControlledInput";
 
 function OneStep() {
     const { handleSubmit, control, getValues, formState: { errors } } = useFormContext();
@@ -83,19 +84,20 @@ function OneStep() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <div>
-                시작 년도: <input type="text" {...startYear} placeholder="Start Year" /><br />
+                시작 년도: <ControlledInput type="text" field={startYear} placeholder="Start Year"/>
                 {errors.education?.start?.year && <span>{errors.education.start.year.message}</span>}
             </div>
             <div>
-                시작 월: <input type="text" {...startMonth} placeholder="Start Month" /><br />
+                시작 월:
+                <input type="text" {...startMonth} placeholder="Start Month"/><br/>
                 {errors.education?.start?.month && <span>{errors.education.start.month.message}</span>}
             </div>
             <div>
-                마감 년도: <input type="text" {...endYear} placeholder="End Year" /><br />
+                마감 년도: <input type="text" {...endYear} placeholder="End Year"/>
                 {errors.education?.end?.year && <span>{errors.education.end.year.message}</span>}
             </div>
             <div>
-                마감 월: <input type="text" {...endMonth} placeholder="End Month" /><br />
+                마감 월: <ControlledInput type="text" field={endMonth}  placeholder="End Month"/> <br /><br />
                 {errors.education?.end?.month && <span>{errors.education.end.month.message}</span>}
             </div>
             <button type="button">Submit</button>
