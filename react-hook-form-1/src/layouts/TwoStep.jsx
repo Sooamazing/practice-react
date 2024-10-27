@@ -1,8 +1,10 @@
-import React from 'react';
-import { useFormContext,useForm, useController } from "react-hook-form";
+import React,{useState} from 'react';
+import { useFormContext,useController } from "react-hook-form";
 
 /**
-    TODO phone 숫자만 입력 허용, - 자동 입력
+    phone 숫자만 입력 허용, - 자동 입력
+    TODO useState 사용하지 않는 방법
+    TODO 다른 문자가 들어오는 경우 잠깐 보였다가 사라지게 하는 방법
  */
 function TwoStep() {
     const { handleSubmit, control, formState: { errors } } = useFormContext();
@@ -12,6 +14,23 @@ function TwoStep() {
 
     const onSubmit = (data) => {
         console.log('TwoStep data:', data);
+    }
+
+    const [formattedPhone, setFormattedPhone] = useState(phone.value);
+
+    const handlePhoneChange = (e) => {
+        const value = e.target.value;
+        const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+        let formattedValue = numericValue;
+
+        if (numericValue.length > 3 && numericValue.length <= 7) {
+            formattedValue = numericValue.replace(/(\d{3})(\d+)/, '$1-$2');
+        } else if (numericValue.length > 7) {
+            formattedValue = numericValue.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3');
+        }
+
+        setFormattedPhone(formattedValue);
+        phone.onChange(numericValue); // Update the form value with the unformatted numeric value
     }
 
     return (
@@ -25,7 +44,7 @@ function TwoStep() {
                 {errors.basic?.email && <span>{errors.basic.email.message}</span>}
             </div>
             <div>
-                전화번호: <input type="text" {...phone} placeholder="Phone" /><br />
+                전화번호: <input type="text" {...phone} placeholder="Phone" onChange={handlePhoneChange} value={formattedPhone}/><br />
                 {errors.basic?.phone && <span>{errors.basic.phone.message}</span>}
             </div>
             <button type="submit">2nd Submit</button>
