@@ -2,8 +2,8 @@ import React from 'react';
 import InputWithFormFeedback from "./InputWithFormFeedback";
 import useOptionField from "../model/useOptionField";
 
-function OptionNameField({ control, index }) {
-    const { field: optionNameField, fieldState: optionNameError } = useOptionField(control, `options[${index}].optionName`, { required: 'Option name is required' });
+function OptionNameField({ index }) {
+    const { field: optionNameField, fieldState: optionNameError } = useOptionField(`options[${index}].optionName`, { required: 'Option name is required' });
 
     return (
         <InputWithFormFeedback
