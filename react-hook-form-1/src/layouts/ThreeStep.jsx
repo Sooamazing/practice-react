@@ -12,8 +12,18 @@ function ThreeStep() {
     const { control } = useFormContext();
     const { fields: productOptions, append, remove } = useFieldArray({
         name: 'options',
-        control
+        control,
+        defaultValues: [{ optionName: '', optionValue: '', optionPrice: '' }]
     });
+
+    // 처음 렌더링 시 기본 옵션 필드 추가
+    if (productOptions.length === 0) {
+        append({
+            optionName: '',
+            optionValue: '',
+            optionPrice: ''
+        });
+    }
 
     const onClickAddOption = () => {
         // default value 추가하지 않으면 [object Object]로 출력됨
