@@ -38,6 +38,8 @@ function SixStep() {
     const { field: color, fieldState: { error: colorError } } = useController({ name: 'a.b.color', control });
 
     // hobby 값이 사라지면 다른 필드의 값도 초기화
+    // 이게 있어야 hobby가 사라지면 favoriteHobby, startTime도 초기화됨
+    // 없어도 Required는 초기화됨.
     // React.useMemo(() => {
     //     if (!hobbyValue) {
     //         clearErrors(['a.b.favoriteHobby', 'a.b.startTime']);
@@ -60,9 +62,12 @@ function SixStep() {
             <input {...hobby} placeholder="Hobby" />
             {hobbyError && <span>hobbyError: {hobbyError.message}</span>}
             <br />
+            {favoriteHobbyRules.required.value&&"required"}
             <input {...newFavoriteHobby} placeholder="Favorite Hobby" s />
             {favoriteHobbyError && <span>favoriteHobby: {favoriteHobbyError.message}</span>}
             <br />
+
+            {startTimeRules.required.value&&"required"}
             <input {...startTime} placeholder="Start Time"  />
             {startTimeError && <span>startTime: {startTimeError.message}</span>}
             <br />
