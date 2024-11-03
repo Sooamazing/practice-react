@@ -3,7 +3,7 @@ import { useStep } from '../contexts/StepContext';
 
 const StepIndicator = () => {
     const { step, goToStep } = useStep();
-    const steps = ["시작", "힘내", "좀더", "야호", "일자"];
+    const steps = ["시작", "힘내", "좀더", "야호", "일자", "의존확인"];
 
     return (
         <div>

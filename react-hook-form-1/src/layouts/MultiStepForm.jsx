@@ -7,6 +7,7 @@ import TwoStep from "./TwoStep";
 import FourStep from "./FourStep";
 import ThreeStep from "./ThreeStep";
 import FiveStep from "./FiveStep";
+import SixStep from "./SixStep";
 
 function MultiStepForm() {
     const methods = useForm({ shouldUnregister: false });
@@ -17,7 +18,8 @@ function MultiStepForm() {
         { component: <TwoStep key="two" />},
         { component: <ThreeStep key="three" />},
         { component: <FourStep key="four" /> },
-        { component: <FiveStep key="five" /> }
+        { component: <FiveStep key="five" /> },
+        { component: <SixStep key="six" /> },
     ];
 
     const onSubmit = (data) => {
