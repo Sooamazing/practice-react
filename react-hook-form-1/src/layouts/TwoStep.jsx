@@ -6,9 +6,25 @@ import {useFormContext, useController} from "react-hook-form";
  TODO 다른 문자가 들어오는 경우 잠깐 보였다가 사라지게 하는 방법
  */
 function TwoStep() {
-    const {handleSubmit, control, formState: {errors}} = useFormContext();
+    const {handleSubmit, control, setValue, formState: {errors}} = useFormContext();
 
-    const {field: name} = useController({name: 'basic.name', control, rules: {required: 'Name is required'}});
+    const {field: name} = useController({
+        name: 'basic.name', control, rules: {
+            required: 'Name is required',
+            validate: value => {
+                // trim() 사용하여 공백 제거 후 저장 및 필수 검증
+                setValue('basic.name', value.trim());
+               return value.trim() !== '' || 'Name is required'
+            }
+        },
+        defaultValue: '',
+        // setValueAs 동작하지 않음.
+        setValueAs: value => {
+            console.log(value);
+            console.log(value.trim() === '');
+            return value.trim() === '' ? undefined : value.trim()
+        }
+    });
     const {field: email} = useController({
         name: 'basic.email',
         control,
