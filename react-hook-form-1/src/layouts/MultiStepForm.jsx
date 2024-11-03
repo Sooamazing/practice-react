@@ -28,7 +28,34 @@ function MultiStepForm() {
         console.log('Final data:', data);
     };
 
+    // 기존 로직
+    // const handleNextStep = async () => {
+    //     const isStepValid = await methods.trigger();
+    //     if (isStepValid) {
+    //         nextStep();
+    //     }
+    // };
+
+    // date trim 로직 추가
+    const trimValues = (data) => {
+        const trimmedData = {};
+        for (const key in data) {
+            if (typeof data[key] === 'string') {
+                trimmedData[key] = data[key].trim();
+            } else if (typeof data[key] === 'object' && data[key] !== null) {
+                trimmedData[key] = trimValues(data[key]);
+            } else {
+                trimmedData[key] = data[key];
+            }
+        }
+        return trimmedData;
+    };
+
     const handleNextStep = async () => {
+        const values = methods.getValues();
+        const trimmedValues = trimValues(values);
+        console.log('trimmedValues:', trimmedValues);
+        methods.reset(trimmedValues);
         const isStepValid = await methods.trigger();
         if (isStepValid) {
             nextStep();
