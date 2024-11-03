@@ -1,63 +1,73 @@
 import React from 'react';
-import {useController, useFormContext, useWatch} from "react-hook-form";
+import { useController, useFormContext, useWatch } from "react-hook-form";
 
+/**
+ * 특정 필드에 입력이 있을 때 다른 필드가 required 속성을 가짐
+ * @returns {Element}
+ * @constructor
+ */
 function SixStep() {
-    const {control, clearErrors, trigger} = useFormContext();
-    const {field: hobby, fieldState: {error: hobbyError}} = useController({name: 'a.b.hobby', control});
-    const hobbyValue = useWatch({control, name: 'a.b.hobby'});
+    const { control, trigger, clearErrors } = useFormContext();
+    const { field: hobby, fieldState: { error: hobbyError } } = useController({ name: 'a.b.hobby', control });
+    const hobbyValue = useWatch({ control, name: 'a.b.hobby' });
 
-    // 조건부 required 규칙
-    const commonRequiredRule = { required: hobbyValue ? 'This field is required' : false };
-
-    const {field: favoriteHobby, fieldState: {error: favoriteHobbyError}} = useController({
-        name: 'a.b.favoriteHobby', control, rules: commonRequiredRule,
-    });
-    const {field: startTime, fieldState: {error: startTimeError}} = useController({
-        name: 'a.b.startTime', control, rules: commonRequiredRule,
-    });
-    const {field: endTime, fieldState: {error: endTimeError}} = useController({
-        name: 'a.b.endTime', control, rules: commonRequiredRule,
-    });
-
-    const {field: color, fieldState: {error: colorError}} = useController({name: 'a.b.color', control});
-
-    const handleInputChange = (name) => {
-        clearErrors(name);
-    };
-
-    const handleHobbyChange = (e) => {
-        hobby.onChange(e);
-
-        // hobby 값에 따라 필수 상태 트리거
-        // Uncaught Error: Too many re-renders. React limits the number of renders to prevent an infinite loop. -> onChange에만 검증
-        // TODO 좀 더 상세히 알아 보기
-        if (e.target.value) {
-            trigger(['a.b.favoriteHobby', 'a.b.startTime', 'a.b.endTime']);
-        } else {
-            clearErrors(['a.b.favoriteHobby', 'a.b.startTime', 'a.b.endTime']);
+    // hobby에 영향 받음
+    const favoriteHobbyRules = {
+        required: {
+            value: !!hobbyValue, message: 'Favorite Hobby is required'
         }
     };
+    const { field: favoriteHobby, fieldState: { error: favoriteHobbyError } } = useController({
+        name: 'a.b.favoriteHobby',
+        control,
+        rules: favoriteHobbyRules,
+    });
+
+    const startTimeRules = {
+        required: {
+            value: !!hobbyValue, message: 'Start Time is required'
+        }
+    };
+    const { field: startTime, fieldState: { error: startTimeError } } = useController({
+        name: 'a.b.startTime',
+        control,
+        rules: startTimeRules
+    });
+
+    // Hobby에 영향 받지 않음.
+    const { field: color, fieldState: { error: colorError } } = useController({ name: 'a.b.color', control });
+
+    // hobby 값이 사라지면 다른 필드의 값도 초기화
+    // React.useMemo(() => {
+    //     if (!hobbyValue) {
+    //         clearErrors(['a.b.favoriteHobby', 'a.b.startTime']);
+    //     }
+    // }, [hobbyValue]);
+
+    // 다른 필드에 입력이 생기면 에러 제거 및 실시간 검증
+    const handleInputChange = (name, onChange) => async (e) => {
+        clearErrors(name);
+        onChange(e);
+        await trigger(name);
+    };
+    const newFavoriteHobby = {...favoriteHobby, onChange: handleInputChange('a.b.favoriteHobby', favoriteHobby.onChange)};
+
+    console.log('hobbyValue:', hobbyValue, 'favoriteHobby error', favoriteHobbyError, 'startTime error:', startTimeError);
 
     return (
         <div>
             <h1>Six step</h1>
-            <input {...hobby} placeholder="Hobby" onChange={handleHobbyChange}/>
+            <input {...hobby} placeholder="Hobby" />
             {hobbyError && <span>hobbyError: {hobbyError.message}</span>}
-            <br/>
-
-            <input {...favoriteHobby} placeholder="Favorite Hobby" onChange={() => handleInputChange('a.b.favoriteHobby')}/>
+            <br />
+            <input {...newFavoriteHobby} placeholder="Favorite Hobby" s />
             {favoriteHobbyError && <span>favoriteHobby: {favoriteHobbyError.message}</span>}
-            <br/>
-
-            <input {...startTime} placeholder="Start Time" onChange={() => handleInputChange('a.b.startTime')}/>
+            <br />
+            <input {...startTime} placeholder="Start Time"  />
             {startTimeError && <span>startTime: {startTimeError.message}</span>}
-            <br/>
+            <br />
 
-            <input {...endTime} placeholder="End Time" onChange={() => handleInputChange('a.b.endTime')}/>
-            {endTimeError && <span>endTime: {endTimeError.message}</span>}
-            <br/>
-
-            <input {...color} placeholder="Color"/>
+            <input {...color} placeholder="Color" />
             {colorError && <span>color: {colorError.message}</span>}
         </div>
     );
