@@ -46,6 +46,23 @@ function SixStep() {
     //     }
     // }, [hobbyValue]);
 
+    // onChange 핸들러를 통해 직접적인 입력 반응을 처리하는 것이 사용자 경험을 개선하는 데 더 효과적입니다. 하지만 상태 변화에 따라 특정 동작을 자동으로 실행해야 하는 경우에는 useMemo가 더 적합할 수 있습니다. 최종적으로 어떤 방법을 사용할지는 특정 컴포넌트의 요구 사항과 성능 고려 사항에 따라 결정해야 합니다.
+
+    // 상기 memo 대신 하기 onChange, clearError로 구현, hobby 필드의 onChange를 커스터마이징
+    const handleHobbyChange = (e) => {
+        // hobby 값을 설정
+        hobby.onChange(e);
+
+        // hobby가 비어 있으면 favoriteHobby와 startTime 초기화 및 에러 제거
+        if (!e.target.value) {
+            clearErrors(['a.b.favoriteHobby', 'a.b.startTime']);
+        }
+    };
+
+    // hobby 필드의 onChange에 커스터마이징 함수 할당
+    const newHobby = { ...hobby, onChange: handleHobbyChange };
+
+
     // 다른 필드에 입력이 생기면 에러 제거 및 실시간 검증
     const handleInputChange = (name, onChange) => async (e) => {
         clearErrors(name);
@@ -59,7 +76,7 @@ function SixStep() {
     return (
         <div>
             <h1>Six step</h1>
-            <input {...hobby} placeholder="Hobby" />
+            <input {...newHobby} placeholder="Hobby" />
             {hobbyError && <span>hobbyError: {hobbyError.message}</span>}
             <br />
             {favoriteHobbyRules.required.value&&"required"}
